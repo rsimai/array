@@ -18,7 +18,12 @@ fillrows = 5
 # rotate 1 is right, -1 is left
 rotate = 1
 
+# the matrix
 z=[]
+
+# the defender
+y=[]
+
 
 # output in cols x rows
 def printout():
@@ -28,9 +33,22 @@ def printout():
         for b in range(0,cols):
             out += z[((cols)*a+b)]
         print out
-        
+    
+# print defender base line
+def print_defender():
+    out = ''
+    for b in range(0,cols):
+        out += y[b]
+    print out
+
+# create the defender base line
+def create_defender():
+    for a in range(0,cols-1):
+        y.append(' ')
+    y.insert(cols/2,'U')
+    
 # create a list
-def create():
+def create_matrix():
     for a in range(0,rows):
         for b in range(0,cols):
             #print a,b
@@ -73,11 +91,13 @@ def add_line():
         z.insert(0,noship)
 
 # main
-create()
+create_defender()
+create_matrix()
 
+# play
 for i in range(0,50):
     os.system('clear')
     printout()
+    print_defender()
     check_out()
     time.sleep(0.3)
-    #print rotate
