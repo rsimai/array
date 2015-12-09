@@ -4,13 +4,14 @@
 # rsimai@suse.com
 
 import time
+import os
 
 # dimensions
 rows = 15
-cols = 25
+cols = 45
 
 ship = 'X'
-noship = ' '
+noship = '.'
 fillup = 1.3
 fillrows = 5
 
@@ -23,10 +24,11 @@ z=[]
 def printout():
     for a in range(0,rows):
         #print a,
+        out = ''
         for b in range(0,cols):
-            print z[((cols)*a+b)],
-        print
-
+            out += z[((cols)*a+b)]
+        print out
+        
 # create a list
 def create():
     for a in range(0,rows):
@@ -74,7 +76,8 @@ def add_line():
 create()
 
 for i in range(0,50):
+    os.system('clear')
     printout()
     check_out()
-    time.sleep(0.5)
+    time.sleep(0.3)
     #print rotate
