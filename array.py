@@ -13,7 +13,7 @@ from select import select
 
 # dimensions
 rows = 20
-cols = 37
+cols = 50
 
 # defender starts at cols/2
 dcol = cols / 2
@@ -31,8 +31,9 @@ rkey = 's'
 skey = ' '
 
 # automatic fill up
-fillup = 1.3
+fillup = 1.25
 fillrows = 5
+
 
 # rotate 1 is right, -1 is left
 rotate = 1
@@ -92,7 +93,6 @@ def printout():
             out += m[((cols)*a+b)]
         print out
     print_defender()
-    print shipcount
 
 # print defender base line
 def print_defender():
@@ -199,9 +199,10 @@ def check_hits():
 
 # check end
 def check_end():
-    if z[cols*rows-1] == ship:
-        print "Game over!"
-        exit(0)
+    for i in range(0,cols):
+        if z[(rows-1)*cols+i] == ship:
+            print "Game over! You missed", shipcount, "ship(s)!"
+            exit(0)
     if shipcount == 0:
         print "Well done!"
         exit(0)
