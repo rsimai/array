@@ -20,8 +20,9 @@ dcol = cols / 2
 
 # characters to be used
 ship = 'X'
-noship = '.'
+noship = ' '
 defender = 'U'
+nodefender = '_'
 shot = '|'
 bang = 'O'
 
@@ -31,9 +32,9 @@ rkey = 's'
 skey = ' '
 
 # automatic fill up
-fillup = 1.25
+fillup = 1.9
 fillrows = 5
-
+blocks = 2
 
 # rotate 1 is right, -1 is left
 rotate = 1
@@ -52,7 +53,7 @@ m=[]
 
 char = 'q'
 shipcount = 0
-scount = 0
+shotcount = 0
 slist = []
 
 # get/save the terminal settings
@@ -93,6 +94,7 @@ def printout():
             out += m[((cols)*a+b)]
         print out
     print_defender()
+    print "Shots:", shotcount, "Ships left:", shipcount, "of", shipcountorig
 
 # print defender base line
 def print_defender():
@@ -104,7 +106,7 @@ def print_defender():
 # create the defender base line
 def create_defender():
     for a in range(0,cols-1):
-        y.append(' ')
+        y.append(nodefender)
     y.insert(dcol, defender)
     
 # create the matrix, ships and shots
@@ -121,6 +123,8 @@ def create_matrix():
                 z.append(noship)
             s.append(' ')
             m = s
+            global shipcountorig
+            shipcountorig = shipcount
 
 # check if left or right has been reached, add a line and change direction
 def check_out():
@@ -161,7 +165,7 @@ def defender_left():
         return
     else:
         y.pop(0)
-        y.append(' ')
+        y.append(nodefender)
         global dcol
         dcol -= 1
 
@@ -169,13 +173,15 @@ def defender_right():
     if y[cols-1] == defender:
         return
     else:
-        y.insert(0, ' ')
+        y.insert(0, nodefender)
         y.pop(cols)
         global dcol
         dcol += 1
 
 def trigger_shot():
     s[(rows-1)*cols+dcol] = shot
+    global shotcount
+    shotcount += 1
  
 def shots_up():
     for i in range(0,cols):
@@ -202,9 +208,11 @@ def check_end():
     for i in range(0,cols):
         if z[(rows-1)*cols+i] == ship:
             print "Game over! You missed", shipcount, "ship(s)!"
+            print
             exit(0)
     if shipcount == 0:
         print "Well done!"
+        print
         exit(0)
 
 # main
@@ -223,7 +231,7 @@ while True:
     check_out()
     shots_up()
     printout()
-    for w in range(0,10):
+    for w in range(0,15):
         kbhit()
         if char:
             if char == lkey:
@@ -235,5 +243,5 @@ while True:
             if char == skey:
                 trigger_shot()
         
-        time.sleep(0.04)
+        time.sleep(0.02)
     check_end()
