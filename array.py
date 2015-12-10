@@ -12,14 +12,20 @@ from select import select
 
 
 # dimensions
-rows = 10
-cols = 45
+rows = 20
+cols = 37
+
+# defender starts at cols/2
+dcol = cols / 2
 
 # characters to be used
 ship = 'X'
 noship = '.'
 defender = 'U'
 shot = '|'
+bang = 'O'
+
+# keys to be used
 lkey = 'a'
 rkey = 's'
 skey = ' '
@@ -37,9 +43,18 @@ z=[]
 # the defender
 y=[]
 
-char = ' '
+# the shots underway
+s=[]
 
-# save the terminal settings
+# printout matrix
+m=[]
+
+char = 'q'
+shipcount = 0
+scount = 0
+slist = []
+
+# get/save the terminal settings
 fd = sys.stdin.fileno()
 new_term = termios.tcgetattr(fd)
 old_term = termios.tcgetattr(fd)
@@ -47,7 +62,7 @@ old_term = termios.tcgetattr(fd)
 # new terminal setting unbuffered
 new_term[3] = (new_term[3] & ~termios.ICANON & ~termios.ECHO)
 
-# switch to normal terminal
+# switch to normal terminal on exit
 def set_normal_term():
     termios.tcsetattr(fd, termios.TCSAFLUSH, old_term)
 
@@ -69,14 +84,15 @@ def kbhit():
 
 # output in cols x rows
 def printout():
+    check_hits()
     os.system('clear')
     for a in range(0,rows):
-        #print a,
         out = ''
         for b in range(0,cols):
-            out += z[((cols)*a+b)]
+            out += m[((cols)*a+b)]
         print out
     print_defender()
+    print shipcount
 
 # print defender base line
 def print_defender():
@@ -89,16 +105,22 @@ def print_defender():
 def create_defender():
     for a in range(0,cols-1):
         y.append(' ')
-    y.insert(cols/2,defender)
+    y.insert(dcol, defender)
     
-# create a list
+# create the matrix, ships and shots
 def create_matrix():
+    global shipcount
+    global m
+    global s
     for a in range(0,rows):
         for b in range(0,cols):
             if (a < fillrows) and (b/fillup == int(b/fillup)):
                 z.append(ship)
+                shipcount += 1
             else:
                 z.append(noship)
+            s.append(' ')
+            m = s
 
 # check if left or right has been reached, add a line and change direction
 def check_out():
@@ -140,6 +162,8 @@ def defender_left():
     else:
         y.pop(0)
         y.append(' ')
+        global dcol
+        dcol -= 1
 
 def defender_right():
     if y[cols-1] == defender:
@@ -147,15 +171,39 @@ def defender_right():
     else:
         y.insert(0, ' ')
         y.pop(cols)
+        global dcol
+        dcol += 1
 
 def trigger_shot():
-    print "not yet :-)"
+    s[(rows-1)*cols+dcol] = shot
+ 
+def shots_up():
+    for i in range(0,cols):
+        s.pop(0)
+        s.append(' ')
+
+# check hits and merge for printout
+def check_hits():
+    global shipcount
+    for i in range(0,cols*rows):
+        if s[i] == shot and z[i] == ship:
+            s[i] = ' '
+            z[i] = noship
+            m[i] = bang
+            shipcount -= 1
+        elif s[i] == shot:
+            m[i] = shot
+        else:
+            m[i] = z[i]
 
 
 # check end
 def check_end():
     if z[cols*rows-1] == ship:
         print "Game over!"
+        exit(0)
+    if shipcount == 0:
+        print "Well done!"
         exit(0)
 
 # main
@@ -169,12 +217,13 @@ create_defender()
 create_matrix()
 
 # play loop
-for i in range(0,90):
+while True:
     # printing/checking
     check_out()
+    shots_up()
     printout()
     for w in range(0,10):
-        key = kbhit()
+        kbhit()
         if char:
             if char == lkey:
                 defender_left()
@@ -184,6 +233,6 @@ for i in range(0,90):
                 printout()
             if char == skey:
                 trigger_shot()
-        time.sleep(0.05)
+        
+        time.sleep(0.04)
     check_end()
-    # waiting
