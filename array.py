@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # rsimai@suse.com
+# Hackweek 13, learning Python
 
 import time
 import os
@@ -12,7 +13,7 @@ from select import select
 
 
 # dimensions
-rows = 20
+rows = 25
 cols = 50
 
 # defender starts at cols/2
@@ -32,7 +33,7 @@ rkey = 's'
 skey = ' '
 
 # automatic fill up
-fillup = 1.9
+fillup = 1.7
 fillrows = 5
 blocks = 2
 
@@ -95,6 +96,7 @@ def printout():
         print out
     print_defender()
     print "Shots:", shotcount, "Ships left:", shipcount, "of", shipcountorig
+    print "Left: \"" + lkey + "\"", " Right: \"" + rkey + "\"", " Fire: \"" + skey + "\""
 
 # print defender base line
 def print_defender():
@@ -207,10 +209,12 @@ def check_hits():
 def check_end():
     for i in range(0,cols):
         if z[(rows-1)*cols+i] == ship:
+            print
             print "Game over! You missed", shipcount, "ship(s)!"
             print
             exit(0)
     if shipcount == 0:
+        print
         print "Well done!"
         print
         exit(0)

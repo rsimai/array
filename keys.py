@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # rsimai@suse.com
+# Hackweek 13, learning Python
+#
+# just to find out how to cheaply get key events without blocking the terminal ...
 
 import atexit
 from select import select
